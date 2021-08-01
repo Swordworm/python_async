@@ -1,7 +1,8 @@
+from aiohttp import ClientSession
 from fastapi import APIRouter, Depends
 from typing import List
 
-from .dependencies import get_post_storage, PostRepository
+from .dependencies import get_post_storage, PostRepository, get_session
 from .models import Post, CreatePostParams, EditPostParams
 
 router = APIRouter(
