@@ -90,11 +90,7 @@ class PostRepository:
     async def _get_user(self, raw_post: Dict[str, Any]):
         data = await self.session.get(f'{self._users_endpoint}/{raw_post["userId"]}')
         user = await data.json()
-        raw_post.pop('userId')
-        raw_post['user'] = {}
-        raw_post['user']['id'] = user['id']
-        raw_post['user']['name'] = user['name']
-        raw_post['user']['email'] = user['email']
+        await self._attach_user_to_post(raw_post, user)
 
     async def _get_comments(self, raw_post):
         data = await self.session.get(
@@ -105,6 +101,13 @@ class PostRepository:
         )
         comments = await data.json()
         raw_post['comments'] = comments
+
+    async def _attach_user_to_post(self, raw_post, user):
+        raw_post.pop('userId')
+        raw_post['user'] = {}
+        raw_post['user']['id'] = user['id']
+        raw_post['user']['name'] = user['name']
+        raw_post['user']['email'] = user['email']
 
     def _convert_post(self, raw_post: Dict[str, Any]) -> Post:
         return Post(**raw_post)
